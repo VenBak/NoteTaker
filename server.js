@@ -4,7 +4,7 @@ const express = require('express');
 // Import path to natvigate through files
 const path = require('path');
 // Import the javascript methods from the second index file
-const api = require('../03-Algorithms/extra/routes/index.js')
+const api = require('./paths/index.js'); 
 
 // define express as a constant called app
 const app = express();
