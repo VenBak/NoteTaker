@@ -1,5 +1,4 @@
-// Imports all the dependencies and the db file
-// Router() allows for routes within routes
+
 const notes = require('express').Router(); 
 const fs = require('fs'); 
 const path = require('path'); 
@@ -10,39 +9,35 @@ function uuid() {
     Math.floor(Math.random * 1000)
 }
 
-// fetches the data for the first note
 notes.get('/', (req, res) => {
     res.sendFile(route);
 });
 
+// 
 notes.post('/', (req, res) => {
 
-    // Sets title and text as variables which lay the base of the requests body which is what will be sent back
     const { title, text } = req.body;
 
     // If there is a title and text
-    if (title == true && text == true) {
-        // Structure for the 
-        const Note = {
+    if (title && text) {
+        const newNote = {
             title,
             text,
             id: uuid()
         };
-    
-    // Reads the db file and pulls the array of objects
+
     fs.readFile(route, 'utf8', (error, data) => {
         // logs error if the db has no objects
         if (error) {
             console.error(error);
         } else {
             // Parse the saved note
-            const dbObject = JSON.parse(data);
+            const parsedNote = JSON.parse(data);
 
             // Push it to an array
-            dbObject.push(Note);
+            parsedNote.push(newNote);
 
-            // Create a new file with the new note withing the array
-            fs.writeFile(route, JSON.stringify(dbObject),
+            fs.writeFile(route, JSON.stringify(parsedNote),
             (error) =>
             error
                 ? console.error(error)
@@ -51,16 +46,15 @@ notes.post('/', (req, res) => {
         }
     })
 
-    // Creates a response that sends back the new note
-    const response = {
-        body: Note
-    }
-    
-    // Sends the response
-    res.json(response);
+        const response = {
+            status: 'success',
+            body: newNote,
+        }
+
+        res.json(response);
+
     } else {
-        // or else log an error
-        console.info('error in saving note');
+        console.info('error in saving');
     }
 });
 
